@@ -2,7 +2,7 @@ import mongoose from 'mongoose';
 const { Schema } = mongoose;
 
 const StaticIdSchema = new Schema({
-    parentId: {
+    associateId: {
         type: String
     }
 })

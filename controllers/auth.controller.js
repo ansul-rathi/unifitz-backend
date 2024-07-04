@@ -7,6 +7,7 @@ import User from '../models/auth.js';
 import nodemailer from 'nodemailer';
 import crypto from 'crypto';
 import StaticId from '../models/staticId.js';
+import Associate from '../models/associate.js';
 // const User = require('../models/auth');
 
 const transporter = nodemailer.createTransport({
@@ -20,9 +21,8 @@ const transporter = nodemailer.createTransport({
 const otps = new Map();
 
 const auth = async (req, res) => {
-  let { email, password } = req.body;
+  let { name, email, password, parentId } = req.body;
   let user = await User.findOne({ email });
-  console.log(user,"defl")
   // Check whether the user with the same email exists already
   // try {
   if (!user) {
@@ -49,9 +49,22 @@ const auth = async (req, res) => {
         return res.status(500).send("Error sending email");
       }
 
-      res.status(200).send({ isNewUser: true });
+      res.status(200).send({ message: 'Please verify with the OTP' });
     });
   }else{
+
+    res.status(200).send({ message: 'The user with same email id has already exists' });
+}
+
+  // Catch errors
+  // } catch (error) {
+  //     console.error(error.message);
+  //     res.status(500).send("Internal Server Error");
+  // }
+};
+
+const login = async (req, res) => {
+  let { email, password } = req.body;
 
   const passwordCompare = await bcrypt.compare(password, user.password);
   if (!passwordCompare) {
@@ -69,15 +82,8 @@ const auth = async (req, res) => {
   res.json(authtoken);
 }
 
-  // Catch errors
-  // } catch (error) {
-  //     console.error(error.message);
-  //     res.status(500).send("Internal Server Error");
-  // }
-};
-
 const verifyOtp = async (req, res) => {
-  const { email, otp, password } = req.body;
+  const { email, otp, password, name, parentId } = req.body;
 
   if (!email || !otp) {
     return res.status(400).send("Email and OTP are required");
@@ -104,11 +110,14 @@ const verifyOtp = async (req, res) => {
   const salt = await bcrypt.genSalt(10);
   const secPass = await bcrypt.hash(password, salt);
 
-  const lastCreatedParentId = await StaticId.find({}).limit(1).exec();
+  const lastCreatedAssociateId = await StaticId.find({}).limit(1).exec();
+  const newAssociate = await Associate.create(req.body);
+  return newAssociate;
 
-  const newParentId = String(parseInt(lastCreatedParentId[0].parentId) + 1);
+  const newAssociateId = String(parseInt(lastCreatedAssociateId[0].associateId) + 1);
 
-  await StaticId.findOneAndUpdate({}, { parentId: newParentId });
+
+  await StaticId.findOneAndUpdate({}, { associateId: newAssociateId });
 
   // Create a new user
   let userDetails = {
@@ -152,4 +161,4 @@ const resendOtp = (req, res) => {
   });
 };
 
-export default { auth, verifyOtp, resendOtp };
+export default { auth, login, verifyOtp, resendOtp };
