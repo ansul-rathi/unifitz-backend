@@ -1,12 +1,15 @@
-import { Router} from 'express';
+import { Router } from "express";
 const router = Router();
 
-import associateController from '../controllers/associate.controller.js';
+import associateController from "../controllers/associate.controller.js";
 
-router.post('/create', associateController.createAssociate);
+router.post("/create", associateController.createAssociate);
 
-router.post('/getAll', associateController.fetchAllAssociate);
+router.get("/getAll", associateController.fetchAllAssociate);
 
-router.post('/getAssocaiteByParentId', associateController.fetchAssociateByParentId);
+router.get(
+  "/getAssocaiteByParentId",
+  associateController.fetchAssociateByParentId
+);
 
 export default router;

@@ -20,8 +20,8 @@ app.use("/auth", authRouter);
 app.use("/associate", associateRouter);
 
 app.post("/staticId", async (req, res) => {
-  const res = await StaticId.create(req.body);
-  res.send(res);
+  const response = await StaticId.create(req.body);
+  res.send(response);
 });
 
 app.listen(port, () => {

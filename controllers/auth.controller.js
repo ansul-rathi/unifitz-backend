@@ -1,13 +1,13 @@
-import bcrypt from 'bcryptjs';
-import jwt from 'jsonwebtoken';
+import bcrypt from "bcryptjs";
+import jwt from "jsonwebtoken";
 // const fetchuser = require('../middleware/fetchuser')
 
 const JWT_SECRET = "PersonalPr$ject";
-import User from '../models/auth.js';
-import nodemailer from 'nodemailer';
-import crypto from 'crypto';
-import StaticId from '../models/staticId.js';
-import Associate from '../models/associate.js';
+import User from "../models/auth.js";
+import nodemailer from "nodemailer";
+import crypto from "crypto";
+import StaticId from "../models/staticId.js";
+import Associate from "../models/associate.js";
 // const User = require('../models/auth');
 
 const transporter = nodemailer.createTransport({
@@ -49,12 +49,13 @@ const auth = async (req, res) => {
         return res.status(500).send("Error sending email");
       }
 
-      res.status(200).send({ message: 'Please verify with the OTP' });
+      res.status(200).send({ message: "Please verify with the OTP" });
     });
-  }else{
-
-    res.status(200).send({ message: 'The user with same email id has already exists' });
-}
+  } else {
+    res
+      .status(200)
+      .send({ message: "The user with same email id has already exists" });
+  }
 
   // Catch errors
   // } catch (error) {
@@ -80,7 +81,7 @@ const login = async (req, res) => {
   };
   const authtoken = jwt.sign(data, JWT_SECRET);
   res.json(authtoken);
-}
+};
 
 const verifyOtp = async (req, res) => {
   const { email, otp, password, name, parentId } = req.body;
@@ -109,34 +110,36 @@ const verifyOtp = async (req, res) => {
   otps.delete(email);
   const salt = await bcrypt.genSalt(10);
   const secPass = await bcrypt.hash(password, salt);
-
   const lastCreatedAssociateId = await StaticId.find({}).limit(1).exec();
-  const newAssociate = await Associate.create(req.body);
-  return newAssociate;
 
-  const newAssociateId = String(parseInt(lastCreatedAssociateId[0].associateId) + 1);
-
-
-  await StaticId.findOneAndUpdate({}, { associateId: newAssociateId });
+  const newAssociateId = String(
+    parseInt(lastCreatedAssociateId[0].associateId) + 1
+  );
 
   // Create a new user
   let userDetails = {
     email,
     password: secPass,
-    parentId: newParentId
+    parentId: parentId,
+    associateId: newAssociateId,
+    name: name,
   };
 
   let userCreate = await User.create(userDetails);
+
+  const newAssociate = await Associate.create(userDetails);
+
+  await StaticId.findOneAndUpdate({}, { associateId: newAssociateId });
+
   const data = {
     user: {
       id: userCreate._id,
     },
   };
   const authtoken = jwt.sign(data, JWT_SECRET);
-  // console.log(jwtData);
+
+  // Send the auth token as the response
   res.json(authtoken);
-  // userCreate.save();
-  res.status(200).send("OTP verified");
 };
 
 const resendOtp = (req, res) => {

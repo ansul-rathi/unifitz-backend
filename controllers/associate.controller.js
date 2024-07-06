@@ -1,4 +1,4 @@
-import Associate from "../models/associate";
+import Associate from "../models/associate.js";
 
 const createAssociate = async (req, res) => {
   let { email } = req.body;
@@ -19,14 +19,14 @@ const fetchAllAssociate = async (req, res) => {
 };
 
 const fetchAssociateByParentId = async (req, res) => {
-  const { parentId } = req.body;
+  const parentId = req.query.parentId;
   if (parentId) {
     const associates = await Associate.find({ parentId });
     res.json(associates);
   } else {
     return res
       .status(400)
-      .json({ success, error: "Sorry this associate is not exists" });
+      .json({ error: "Sorry this associate is not exists" });
   }
 };
 
