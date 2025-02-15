@@ -7,7 +7,7 @@ import associateRouter from "./routes/associate.js";
 import StaticId from "./models/staticId.js";
 
 const app = express();
-const port = 5000;
+const port = 8000;
 
 connectToMongo();
 
