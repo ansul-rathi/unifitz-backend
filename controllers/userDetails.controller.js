@@ -32,6 +32,17 @@ const getAllUserDetails = async (req, res) => {
 //   res.json(allAssociates);
 };
 
+const imagesUpload = async() => {
+    const imageFilenames = req.files.map(file => file.filename);
+    const user = await UserDetails.findByIdAndUpdate(
+        { _id: req.body.userId },
+        { $push: { images: { $each: imageFilenames } } }, // Append images
+        { new: true }
+      );
+  
+    return res.json({ message: "Files uploaded successfully", files: req.files });
+}
+
 // const fetchAssociateByParentId = async (req, res) => {
 //   const parentId = req.query.parentId;
 //   if (parentId) {
