@@ -34,7 +34,7 @@ router.post('/createUserDetails', userDetailsController.createNewUserDetails);
 
 router.get('/getAllUserDetails', userDetailsController.getAllUserDetails);
 
-router.post("/upload", upload.array("images", 10),(err: any, req: any, res: any, next: any) => {
+router.post("/upload", upload.array("images", 10),(err, req, res, next) => {
   if (err) {
     console.error("Upload Error:", err.message);
     return res.status(400).json({ error: err.message });
