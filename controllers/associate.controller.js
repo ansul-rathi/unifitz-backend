@@ -5,11 +5,11 @@ const createAssociate = async (req, res) => {
   let user = await Associate.findOne({ email });
   if (!user) {
     const newAssociate = await Associate.create(req.body);
-    return newAssociate;
+    return res.send(newAssociate);
   } else {
     return res
       .status(400)
-      .json({ success, error: "Sorry a user with this email already exists" });
+      .json({ error: "Sorry a user with this email already exists" });
   }
 };
 
