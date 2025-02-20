@@ -4,6 +4,7 @@ import bodyParser from "body-parser";
 import connectToMongo from "./config/db.js";
 import authRouter from "./routes/auth.js";
 import associateRouter from "./routes/associate.js";
+import userDetailRouter from "./routes/userDetails.js";
 import StaticId from "./models/staticId.js";
 
 const app = express();
@@ -18,6 +19,8 @@ app.use(bodyParser.json());
 app.use("/auth", authRouter);
 
 app.use("/associate", associateRouter);
+
+app.use("/userDetail", userDetailRouter);
 
 app.post("/staticId", async (req, res) => {
   const response = await StaticId.create(req.body);
