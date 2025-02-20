@@ -56,4 +56,4 @@ const imagesUpload = async() => {
 // };
 
 // export default { createAssociate, fetchAllAssociate, fetchAssociateByParentId };
-export default { createNewUserDetails, getAllUserDetails };
+export default { createNewUserDetails, getAllUserDetails, imagesUpload };

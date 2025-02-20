@@ -34,11 +34,14 @@ router.post('/createUserDetails', userDetailsController.createNewUserDetails);
 
 router.get('/getAllUserDetails', userDetailsController.getAllUserDetails);
 
-app.post("/upload", upload.array("images", 10), (req, res) => {
-    if (!req.files) {
-      return res.status(400).json({ message: "No files uploaded" });
-    }
-    userDetailsController.imagesUpload();
-  });
+router.post("/upload", upload.array("images", 10),(err: any, req: any, res: any, next: any) => {
+  if (err) {
+    console.error("Upload Error:", err.message);
+    return res.status(400).json({ error: err.message });
+  }
+  next();
+},
+  userDetailsController.imagesUpload
+);
 
 export default router;
